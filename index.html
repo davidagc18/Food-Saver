@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Saver - Alacena Inteligente (POO)</title>
+    <style>
+       :root {
+            /* Paleta: Smoothie Orgánico */
+            --primary: #8B5CF6;    /* Morado Mora/Acai (Moderno y vibrante) */
+            --secondary: #6D28D9;  /* Uva Oscura (Para contraste) */
+            --accent: #F43F5E;     /* Frambuesa Vibrante (Para botones o alertas) */
+            --bg: #F8FAFC;         /* Blanco Hielo */
+            --text: #1E293B;       /* Azul Pizarra muy oscuro */
+            --text-muted: #64748B; /* Gris azulado */
+            --danger: #E11D48;     /* Rojo Cereza Oscuro */
+            --warning: #FBBF24;    /* Amarillo Miel */
+            --card-bg: #ffffff;
+            
+            --shadow: 0 4px 10px rgba(139, 92, 246, 0.15);
+            --shadow-hover: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 20px; 
+        }
+
+        /* Títulos */
+        h1, h2, h3 { color: var(--secondary); margin-top: 0; font-weight: 700; letter-spacing: -0.5px; }
+        
+        /* Contenedores generales */
+        .container { max-width: 1000px; margin: auto; }
+        #screen-diet { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        #screen-main { display: none; padding: 20px; max-width: 1200px; margin: auto; }
+        
+        /* Cabeceras y Paneles (Tarjetas) */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 25px; background: var(--card-bg); padding: 20px 30px; 
+            border-radius: 12px; box-shadow: var(--shadow); 
+        }
+        .panel { 
+            background: var(--card-bg); padding: 25px; border-radius: 12px; 
+            box-shadow: var(--shadow); height: 50vh; overflow-y: auto; 
+            border: 1px solid #E2E8F0;
+        }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .section-title { border-bottom: 2px solid #F1F5F9; padding-bottom: 12px; color: var(--text); font-weight: 700; font-size: 1.2em; }
+        
+        /* Buscador */
+        .search-bar { 
+            padding: 12px 20px; width: 300px; border-radius: 8px; 
+            border: 1px solid #CBD5E1; outline: none; transition: 0.2s;
+            font-size: 14px; color: var(--text); background: #F8FAFC;
+        }
+        .search-bar:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15); }
+        
+        /* Botones Globales (Vibrantes pero planos) */
+        .action-btn, .diet-btn, .add-btn { 
+            background-color: var(--primary); 
+            color: white; border: none; border-radius: 8px; cursor: pointer; 
+            font-weight: 600; transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+        }
+        .action-btn:hover, .diet-btn:hover, .add-btn:hover { 
+            background-color: var(--secondary);
+            transform: translateY(-1px); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); 
+        }
+        .diet-btn { margin: 10px; padding: 15px 40px; font-size: 1.1em; border-radius: 12px; }
+        .action-btn { padding: 10px 20px; }
+        .add-btn { padding: 8px 16px; border-radius: 6px; }
+        
+        /* Botones Secundarios */
+        .delete-btn { background: white; color: var(--danger); border: 1px solid #FCCCA7; box-shadow: none; }
+        .delete-btn:hover { background: #FEF2F2; color: var(--danger); border-color: var(--danger); box-shadow: none; }
+        .btn-volver { background: white; color: var(--text-muted); border: 1px solid #E2E8F0; box-shadow: none; }
+        .btn-volver:hover { background: #F1F5F9; color: var(--text); box-shadow: none; }
+        
+        /* Estado deshabilitado */
+        .diet-btn:disabled, .action-btn:disabled { 
+            background: #E2E8F0; color: #94A3B8; cursor: not-allowed; 
+            transform: none; box-shadow: none; border: none;
+        }
+
+        /* Listas de Alimentos */
+        .food-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 15px; border-bottom: 1px solid #F1F5F9; transition: 0.2s;
+        }
+        .food-item:hover { background-color: #F8FAFC; border-radius: 8px; }
+        .food-item small { color: var(--text-muted); display: block; margin-top: 4px; }
+        
+        /* Modales */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        .modal-content { background: white; padding: 35px; border-radius: 16px; width: 350px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-content input, .modal-content select { 
+            width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #CBD5E1; 
+            border-radius: 8px; font-size: 15px; outline: none; transition: 0.2s; color: var(--text);
+        }
+        .modal-content input:focus, .modal-content select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1); }
+        .btn-group { display: flex; justify-content: space-around; margin-top: 25px; gap: 15px; }
+        .btn-group .action-btn { width: 100%; }
+
+        /* Estilos específicos del Recetario (siguiente.html) */
+        .recipes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px;}
+        .recipe-card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden;
+            box-shadow: var(--shadow); display: flex; flex-direction: column; 
+            transition: all 0.2s ease; border: 1px solid #E2E8F0;
+        }
+        .recipe-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .recipe-urgent { border-top: 4px solid var(--danger); }
+        
+        .recipe-img { width: 100%; height: 180px; object-fit: cover; background-color: #F1F5F9; border-bottom: 1px solid #E2E8F0; }
+        .recipe-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;}
+        .recipe-title { font-size: 1.2em; margin-bottom: 15px; color: var(--text); font-weight: 700; display: flex; align-items: center; justify-content: space-between;}
+        
+        .badge { 
+            font-size: 0.7em; padding: 4px 10px; border-radius: 12px; 
+            background: #FEF2F2; color: #DC2626; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .empty-message { text-align: center; background: white; padding: 40px; border-radius: 12px; color: var(--text-muted); font-size: 1.1em; border: 2px dashed #CBD5E1; font-weight: 500; }
+        /* Punto de color para clasificar alimentos */
+        .type-dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PANTALLA 1: Orientación -->
+    <div id="screen-diet">
+        <h1>Bienvenido a Food Saver</h1>
+        <p>Por favor, selecciona tu orientación alimenticia:</p>
+        <div>
+            <button class="diet-btn" onclick="initApp('omnivoro')">Omnívoro</button>
+            <button class="diet-btn" onclick="initApp('vegetariano')">Vegetariano</button>
+            <button class="diet-btn" onclick="initApp('vegano')">Vegano</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: Interfaz Principal -->
+    <div id="screen-main">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h2 id="user-diet-display" style="margin: 0;">Mi Alacena</h2>
+                <!-- Botón para limpiar memoria y volver al inicio -->
+                <button class="action-btn delete-btn" onclick="resetearApp()">Resetear Todo</button>
+            </div>
+            <input type="text" id="search-input" class="search-bar" placeholder="Buscar en la base de datos..." onkeyup="renderDatabase()">
+        </div>
+
+        <div class="grid-container">
+            <div class="panel">
+                <h3 class="section-title">Mi Alacena Virtual</h3>
+                <div id="pantry-list"></div>
+            </div>
+
+            <div class="panel">
+                <h3 class="section-title">Base de Datos de Alimentos</h3>
+                <div id="db-list"></div>
+            </div>
+        </div>
+
+        <!-- Botón de Siguiente Página -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="btn-siguiente" class="diet-btn" onclick="window.location.href='siguiente.html'" disabled>Ir al Recetario (Siguiente)</button>
+        </div>
+    </div>
+
+    <!-- Modal Agregar -->
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-food-name">Agregar Alimento</h3>
+            <input type="number" id="modal-weight" placeholder="Peso en gramos (Ej: 500)">
+            <div id="modal-dynamic-input"></div>
+            <div class="btn-group">
+                <button class="action-btn" onclick="confirmAddFood()">Guardar</button>
+                <button class="action-btn delete-btn" onclick="closeModal('add-modal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Actualizar -->
+    <div id="update-modal" class="modal">
+        <div class="modal-content">
+            <h3>Actualización Requerida</h3>
+            <p>Por favor actualiza el estado de:</p>
+            <h4 id="update-food-name"></h4>
+            <select id="update-state-select">
+                <option value="Fresco">Fresco</option>
+                <option value="Maduro">Maduro</option>
+                <option value="Pasado">Pasado</option>
+            </select>
+            <div class="btn-group">
+                <button class="action-btn" onclick="confirmUpdateState()">Actualizar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. CLASES POO (Ahora usan 'cantidad' y 'medida')
+        class Alimento {
+            constructor(id, nombre, tipo, cantidad, medida) {
+                this.id = id; this.nombre = nombre; this.tipo = tipo; 
+                this.cantidad = cantidad; this.medida = medida;
+            }
+        }
+
+        class AlimentoPerecedero extends Alimento {
+            constructor(id, nombre, tipo, cantidad, medida, estado) {
+                super(id, nombre, tipo, cantidad, medida);
+                this.estado = estado; 
+                this.ultimaActualizacion = new Date().getTime();
+            }
+            requiereActualizacion() { return (new Date().getTime() - this.ultimaActualizacion) > (24 * 60 * 60 * 1000); }
+            actualizarEstado(nuevoEstado) { this.estado = nuevoEstado; this.ultimaActualizacion = new Date().getTime(); }
+        }
+
+        class AlimentoNoPerecedero extends Alimento {
+            constructor(id, nombre, tipo, cantidad, medida, fechaCaducidad) {
+                super(id, nombre, tipo, cantidad, medida);
+                this.fechaCaducidad = fechaCaducidad;
+            }
+        }
+
+        class Alacena {
+            constructor() { this.inventario = []; this.dietaUsuario = null; this.cargarDatos(); }
+            setDieta(dieta) { this.dietaUsuario = dieta; this.guardarDatos(); }
+            
+            agregarAlimento(nuevoAlimento) {
+                let index = this.inventario.findIndex(a => a.id === nuevoAlimento.id);
+                if (index !== -1 && this.inventario[index].constructor.name === nuevoAlimento.constructor.name) {
+                    this.inventario[index].cantidad += nuevoAlimento.cantidad;
+                } else {
+                    this.inventario.push(nuevoAlimento);
+                }
+                this.guardarDatos();
+            }
+            eliminarAlimento(index) { this.inventario.splice(index, 1); this.guardarDatos(); }
+            
+            guardarDatos() {
+                localStorage.setItem('foodsaver_diet', this.dietaUsuario);
+                localStorage.setItem('foodsaver_pantry', JSON.stringify(this.inventario));
+            }
+            cargarDatos() {
+                this.dietaUsuario = localStorage.getItem('foodsaver_diet');
+                let dataGuardada = JSON.parse(localStorage.getItem('foodsaver_pantry')) || [];
+                this.inventario = dataGuardada.map(item => {
+                    if (item.estado) {
+                        let p = new AlimentoPerecedero(item.id, item.nombre, item.tipo, item.cantidad, item.medida, item.estado);
+                        p.ultimaActualizacion = item.ultimaActualizacion;
+                        return p;
+                    } else {
+                        return new AlimentoNoPerecedero(item.id, item.nombre, item.tipo, item.cantidad, item.medida, item.fechaCaducidad);
+                    }
+                });
+            }
+        }
+
+        // 2. BASE DE DATOS INTELIGENTE (¡Aquí está la magia de las unidades y estados!)
+       // 1. Empezamos con una base de datos vacía en el navegador
+        let baseAlimentos = [];
+
+        // 2. Modificamos el arranque para que primero descargue los datos de MySQL
+        window.onload = async () => { 
+            await descargarAlimentosDesdeMySQL(); // Esperamos a que lleguen los datos
+            if (miAlacena.dietaUsuario) {
+                showMainScreen(); 
+            }
+        };
+
+        // 3. LA FUNCIÓN MÁGICA DE CONEXIÓN (Fetch)
+        async function descargarAlimentosDesdeMySQL() {
+            try {
+                // Hacemos una petición HTTP a tu backend en Java (Ej: un Servlet)
+                // Cambia 'ObtenerAlimentosServlet' por la URL real de tu Servlet en NetBeans
+                const respuesta = await fetch('ObtenerAlimentosServlet', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!respuesta.ok) throw new Error("Error en el servidor Java");
+
+                // Convertimos la respuesta de Java (JSON) al arreglo baseAlimentos
+                baseAlimentos = await respuesta.json();
+                
+                console.log("¡Datos cargados con éxito desde MySQL!", baseAlimentos);
+
+            } catch (error) {
+                console.error("Fallo la conexión a la base de datos:", error);
+                document.getElementById('db-list').innerHTML = 
+                    "<p style='color:red;'>⚠️ Error conectando a la base de datos. Asegúrate de que Tomcat y MySQL estén encendidos.</p>";
+            }
+        };
+
+        // Diccionario de colores
+        function getColorPorTipo(tipo) {
+            switch(tipo) {
+                case 'carne': return '#EF4444'; 
+                case 'vegetal': return '#22C55E'; 
+                case 'fruta': return '#EC4899'; 
+                case 'grano': return '#EAB308'; 
+                case 'animal': case 'animal_derivado': return '#3B82F6'; 
+                default: return '#94A3B8'; 
+            }
+        }
+
+        const miAlacena = new Alacena();
+        let seleccionTemporal = null; 
+        let tempUpdateIndex = null;
+
+        window.onload = () => { if (miAlacena.dietaUsuario) showMainScreen(); };
+        function initApp(dietType) { miAlacena.setDieta(dietType); showMainScreen(); }
+
+        function showMainScreen() {
+            document.getElementById('screen-diet').style.display = 'none';
+            document.getElementById('screen-main').style.display = 'block';
+            document.getElementById('user-diet-display').innerText = `Mi Alacena (${miAlacena.dietaUsuario})`;
+            renderDatabase(); renderPantry(); checkDailyUpdates(); 
+        }
+
+        function renderDatabase() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const dbList = document.getElementById('db-list');
+            dbList.innerHTML = '';
+            
+            baseAlimentos.forEach(food => {
+                if (!food.nombre.toLowerCase().includes(query)) return;
+                if (miAlacena.dietaUsuario === 'vegano' && (food.tipo === 'carne' || food.tipo === 'animal' || food.tipo === 'animal_derivado')) return;
+                if (miAlacena.dietaUsuario === 'vegetariano' && food.tipo === 'carne') return;
+
+                const div = document.createElement('div'); div.className = 'food-item';
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center;">
+                        <span class="type-dot" style="background-color: ${getColorPorTipo(food.tipo)}"></span>
+                        <span>${food.nombre} <small style="display: inline; margin-left: 5px;">(${food.tipo})</small></span>
+                    </div>
+                    <button class="add-btn" onclick="openAddModal(${food.id})">+</button>`;
+                dbList.appendChild(div);
+            });
+        }
+
+        function renderPantry() {
+            const pantryList = document.getElementById('pantry-list');
+            pantryList.innerHTML = '';
+            if (miAlacena.inventario.length === 0) pantryList.innerHTML = '<p class="empty-message" style="padding: 20px; text-align: center;">Tu alacena está vacía.</p>';
+
+            miAlacena.inventario.forEach((item, index) => {
+                let extraInfo = (item instanceof AlimentoPerecedero) 
+                    ? `<span style="color:var(--warning)">Estado: ${item.estado}</span>` 
+                    : `<span style="color:var(--danger)">Vence: ${item.fechaCaducidad}</span>`;
+
+                const div = document.createElement('div'); div.className = 'food-item';
+                div.innerHTML = `
+                    <div>
+                        <div style="display: flex; align-items: center;">
+                            <span class="type-dot" style="background-color: ${getColorPorTipo(item.tipo)}"></span>
+                            <strong>${item.nombre}</strong> <span style="margin-left: 8px;">- ${item.cantidad} ${item.medida}</span>
+                        </div>
+                        <small style="margin-top: 6px; margin-left: 24px;">${extraInfo}</small>
+                    </div>
+                    <button class="action-btn delete-btn" onclick="deleteFromPantry(${index})">Eliminar</button>`;
+                pantryList.appendChild(div);
+            });
+
+            const btnSiguiente = document.getElementById('btn-siguiente');
+            if (btnSiguiente) btnSiguiente.disabled = (miAlacena.inventario.length === 0);
+        }
+
+        function openAddModal(foodId) {
+            seleccionTemporal = baseAlimentos.find(f => f.id === foodId);
+            document.getElementById('modal-food-name').innerText = `Agregando: ${seleccionTemporal.nombre}`;
+            
+            // Adaptamos el placeholder del input para que pida gramos o unidades
+            const inputPeso = document.getElementById('modal-weight');
+            inputPeso.value = '';
+            inputPeso.placeholder = `Ingrese cantidad en ${seleccionTemporal.medida}`;
+            
+            const dynamicDiv = document.getElementById('modal-dynamic-input');
+            // Usamos la nueva propiedad 'usaEstado' para decidir si mostramos la fecha o el estado
+            if (seleccionTemporal.usaEstado) {
+                dynamicDiv.innerHTML = `<select id="modal-state"><option value="Fresco">Fresco</option><option value="Maduro">Maduro</option><option value="Pasado">Pasado</option></select>`;
+            } else {
+                dynamicDiv.innerHTML = `<input type="date" id="modal-date" required>`;
+            }
+            document.getElementById('add-modal').style.display = 'flex';
+        }
+
+        function confirmAddFood() {
+            const cantidad = parseInt(document.getElementById('modal-weight').value);
+            if (!cantidad || cantidad <= 0) return alert("Ingrese una cantidad válida.");
+
+            let nuevoItem;
+            if (seleccionTemporal.usaEstado) {
+                const estado = document.getElementById('modal-state').value;
+                nuevoItem = new AlimentoPerecedero(seleccionTemporal.id, seleccionTemporal.nombre, seleccionTemporal.tipo, cantidad, seleccionTemporal.medida, estado);
+            } else {
+                const fecha = document.getElementById('modal-date').value;
+                if (!fecha) return alert("Seleccione fecha de vencimiento.");
+                nuevoItem = new AlimentoNoPerecedero(seleccionTemporal.id, seleccionTemporal.nombre, seleccionTemporal.tipo, cantidad, seleccionTemporal.medida, fecha);
+            }
+
+            miAlacena.agregarAlimento(nuevoItem);
+            closeModal('add-modal'); renderPantry();
+        }
+
+        function deleteFromPantry(index) { miAlacena.eliminarAlimento(index); renderPantry(); }
+
+        function checkDailyUpdates() {
+            for (let i = 0; i < miAlacena.inventario.length; i++) {
+                let item = miAlacena.inventario[i];
+                if (item instanceof AlimentoPerecedero && item.requiereActualizacion()) {
+                    tempUpdateIndex = i;
+                    document.getElementById('update-food-name').innerText = item.nombre;
+                    document.getElementById('update-modal').style.display = 'flex';
+                    break;
+                }
+            }
+        }
+
+        function confirmUpdateState() {
+            miAlacena.inventario[tempUpdateIndex].actualizarEstado(document.getElementById('update-state-select').value);
+            miAlacena.guardarDatos(); closeModal('update-modal'); renderPantry();
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function resetearApp() { localStorage.clear(); location.reload(); }
+    </script>
+</body>
+</html>

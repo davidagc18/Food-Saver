@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Saver - Recetario Inteligente</title>
+    <style>
+     :root {
+            /* Paleta "Fresh & Clean" - Viva, moderna y equilibrada */
+            --primary: #22C55E;    /* Verde albahaca (Vivo y fresco) */
+            --secondary: #16A34A;  /* Verde oscuro (Para dar contraste y profundidad) */
+            --accent: #F59E0B;     /* Naranja cálido (Para destacar elementos clave) */
+            --bg: #F8FAFC;         /* Gris-azulado ultra claro (Fondo limpio y moderno) */
+            --text: #334155;       /* Gris pizarra oscuro (Excelente legibilidad) */
+            --text-muted: #64748B; /* Gris medio para subtítulos */
+            --danger: #EF4444;     /* Rojo coral brillante pero controlado */
+            --warning: #EAB308;    /* Amarillo dorado */
+            --card-bg: #ffffff;    /* Blanco puro para las tarjetas */
+            
+            /* Sombras nítidas y modernas (estilo Tailwind CSS) */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 20px; 
+        }
+
+        /* Títulos */
+        h1, h2, h3 { color: var(--secondary); margin-top: 0; font-weight: 700; letter-spacing: -0.5px; }
+        
+        /* Contenedores generales */
+        .container { max-width: 1000px; margin: auto; }
+        #screen-diet { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        #screen-main { display: none; padding: 20px; max-width: 1200px; margin: auto; }
+        
+        /* Cabeceras y Paneles (Tarjetas) */
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 25px; background: var(--card-bg); padding: 20px 30px; 
+            border-radius: 12px; box-shadow: var(--shadow); 
+        }
+        .panel { 
+            background: var(--card-bg); padding: 25px; border-radius: 12px; 
+            box-shadow: var(--shadow); height: 50vh; overflow-y: auto; 
+            border: 1px solid #E2E8F0;
+        }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .section-title { border-bottom: 2px solid #F1F5F9; padding-bottom: 12px; color: var(--text); font-weight: 700; font-size: 1.2em; }
+        
+        /* Buscador */
+        .search-bar { 
+            padding: 12px 20px; width: 300px; border-radius: 8px; 
+            border: 1px solid #CBD5E1; outline: none; transition: 0.2s;
+            font-size: 14px; color: var(--text); background: #F8FAFC;
+        }
+        .search-bar:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15); }
+        
+        /* Botones Globales (Vibrantes pero planos) */
+        .action-btn, .diet-btn, .add-btn { 
+            background-color: var(--primary); 
+            color: white; border: none; border-radius: 8px; cursor: pointer; 
+            font-weight: 600; transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+        }
+        .action-btn:hover, .diet-btn:hover, .add-btn:hover { 
+            background-color: var(--secondary);
+            transform: translateY(-1px); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); 
+        }
+        .diet-btn { margin: 10px; padding: 15px 40px; font-size: 1.1em; border-radius: 12px; }
+        .action-btn { padding: 10px 20px; }
+        .add-btn { padding: 8px 16px; border-radius: 6px; }
+        
+        /* Botones Secundarios */
+        .delete-btn { background: white; color: var(--danger); border: 1px solid #FCCCA7; box-shadow: none; }
+        .delete-btn:hover { background: #FEF2F2; color: var(--danger); border-color: var(--danger); box-shadow: none; }
+        .btn-volver { background: white; color: var(--text-muted); border: 1px solid #E2E8F0; box-shadow: none; }
+        .btn-volver:hover { background: #F1F5F9; color: var(--text); box-shadow: none; }
+        
+        /* Estado deshabilitado */
+        .diet-btn:disabled, .action-btn:disabled { 
+            background: #E2E8F0; color: #94A3B8; cursor: not-allowed; 
+            transform: none; box-shadow: none; border: none;
+        }
+
+        /* Listas de Alimentos */
+        .food-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 15px; border-bottom: 1px solid #F1F5F9; transition: 0.2s;
+        }
+        .food-item:hover { background-color: #F8FAFC; border-radius: 8px; }
+        .food-item small { color: var(--text-muted); display: block; margin-top: 4px; }
+        
+        /* Modales */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        .modal-content { background: white; padding: 35px; border-radius: 16px; width: 350px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .modal-content input, .modal-content select { 
+            width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #CBD5E1; 
+            border-radius: 8px; font-size: 15px; outline: none; transition: 0.2s; color: var(--text);
+        }
+        .modal-content input:focus, .modal-content select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1); }
+        .btn-group { display: flex; justify-content: space-around; margin-top: 25px; gap: 15px; }
+        .btn-group .action-btn { width: 100%; }
+
+        /* Estilos específicos del Recetario (siguiente.html) */
+        .recipes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 20px;}
+        .recipe-card { 
+            background: var(--card-bg); border-radius: 12px; overflow: hidden;
+            box-shadow: var(--shadow); display: flex; flex-direction: column; 
+            transition: all 0.2s ease; border: 1px solid #E2E8F0;
+        }
+        .recipe-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .recipe-urgent { border-top: 4px solid var(--danger); }
+        
+        .recipe-img { width: 100%; height: 180px; object-fit: cover; background-color: #F1F5F9; border-bottom: 1px solid #E2E8F0; }
+        .recipe-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;}
+        .recipe-title { font-size: 1.2em; margin-bottom: 15px; color: var(--text); font-weight: 700; display: flex; align-items: center; justify-content: space-between;}
+        
+        .badge { 
+            font-size: 0.7em; padding: 4px 10px; border-radius: 12px; 
+            background: #FEF2F2; color: #DC2626; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .empty-message { text-align: center; background: white; padding: 40px; border-radius: 12px; color: var(--text-muted); font-size: 1.1em; border: 2px dashed #CBD5E1; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>🥘 Recetario Inteligente</h2>
+            <button class="action-btn btn-volver" onclick="window.location.href='index.html'">⬅ Volver a Mi Alacena</button>
+        </div>
+
+        <p>Estas son las recetas que puedes preparar hoy con los ingredientes que tienes guardados.</p>
+
+        <div id="recipes-grid" class="recipes-grid"></div>
+    </div>
+
+    <script>
+        class Receta {
+            constructor(id, nombre, grupo, ingredientes, imagen) {
+                this.id = id; this.nombre = nombre; this.grupo = grupo; this.ingredientes = ingredientes;
+                this.imagen = imagen || "https://placehold.co/400x200/e9ecef/666666?text=Foto+del+Plato";
+            }
+            sePuedeCocinar(inventarioAlacena) {
+                return this.ingredientes.every(req => {
+                    let item = inventarioAlacena.find(p => p.id === req.id);
+                    return item && item.cantidad >= req.qty; // Cambiado a cantidad
+                });
+            }
+            usaIngredienteCritico(inventarioAlacena) {
+                return this.ingredientes.some(req => {
+                    let item = inventarioAlacena.find(p => p.id === req.id);
+                    if (!item) return false;
+                    if (item.estado && item.estado === "Pasado") return true;
+                    if (item.fechaCaducidad) {
+                        let dias = (new Date(item.fechaCaducidad).getTime() - new Date().getTime()) / (1000 * 3600 * 24);
+                        return dias <= 3;
+                    }
+                    return false;
+                });
+            }
+        }
+
+        const baseAlimentos = [
+            { id: 1, nombre: "Arroz", tipo: "grano", medida: "g" },
+            { id: 2, nombre: "Huevo", tipo: "animal", medida: "unidades" },
+            { id: 3, nombre: "Leche", tipo: "animal_derivado", medida: "ml" },
+            { id: 4, nombre: "Carne de Res", tipo: "carne", medida: "g" },
+            { id: 5, nombre: "Tomate", tipo: "vegetal", medida: "unidades" },
+            { id: 6, nombre: "Manzana", tipo: "fruta", medida: "unidades" }
+        ];
+
+        // RECETAS ACTUALIZADAS (Ahora piden 2 unidades de huevo, 2 unidades de tomate, etc.)
+        const baseRecetas = [
+            new Receta(101, "Huevo Frito con Arroz", "arroz_huevo", [{id: 1, qty: 100}, {id: 2, qty: 2}], "https://placehold.co/400x200/fdfd96/333333?text=Huevos+con+Arroz"),
+            new Receta(102, "Arroz con Huevo Revuelto", "arroz_huevo", [{id: 1, qty: 100}, {id: 2, qty: 2}], "https://placehold.co/400x200/fdfd96/333333?text=Arroz+Revuelto"),
+            new Receta(201, "Arroz Rojo (Con Tomate)", "arroz_tomate", [{id: 1, qty: 150}, {id: 5, qty: 2}], "https://placehold.co/400x200/ffcccb/333333?text=Arroz+con+Tomate"),
+            new Receta(301, "Carne Asada con Arroz", "carne_arroz", [{id: 4, qty: 200}, {id: 1, qty: 100}], "https://placehold.co/400x200/d3b8ae/333333?text=Carne+Asada"),
+            new Receta(401, "Tortilla de Tomate", "huevo_tomate", [{id: 2, qty: 3}, {id: 5, qty: 2}], "https://placehold.co/400x200/ffb347/333333?text=Tortilla+de+Tomate")
+        ];
+
+        function getColorPorTipo(tipo) {
+            switch(tipo) {
+                case 'carne': return '#EF4444'; case 'vegetal': return '#22C55E'; 
+                case 'fruta': return '#EC4899'; case 'grano': return '#EAB308'; 
+                case 'animal': case 'animal_derivado': return '#3B82F6'; 
+                default: return '#94A3B8'; 
+            }
+        }
+
+        let inventario = [];
+
+        window.onload = () => { cargarDatos(); renderizarRecetas(); };
+
+        function cargarDatos() {
+            let dataGuardada = localStorage.getItem('foodsaver_pantry');
+            inventario = dataGuardada ? JSON.parse(dataGuardada) : [];
+        }
+
+        function guardarDatos() { localStorage.setItem('foodsaver_pantry', JSON.stringify(inventario)); }
+
+        function renderizarRecetas() {
+            const grid = document.getElementById('recipes-grid'); grid.innerHTML = '';
+            let posibles = baseRecetas.filter(receta => receta.sePuedeCocinar(inventario));
+
+            if (posibles.length === 0) {
+                grid.innerHTML = `<div class="empty-message">No tienes suficientes ingredientes en la alacena para armar una receta. ¡Añade más alimentos!</div>`; return;
+            }
+
+            let agrupadas = {};
+            posibles.forEach(r => { if(!agrupadas[r.grupo]) agrupadas[r.grupo] = []; agrupadas[r.grupo].push(r); });
+
+            for (const grupo in agrupadas) {
+                let recetasDelGrupo = agrupadas[grupo];
+                let esUrgente = recetasDelGrupo[0].usaIngredienteCritico(inventario);
+                let indexAleatorio = Math.floor(Math.random() * recetasDelGrupo.length);
+                let recetaSeleccionada = recetasDelGrupo[indexAleatorio];
+
+                // Textos con medida dinámica y circulito de color
+                let textoIngredientes = recetaSeleccionada.ingredientes.map(req => {
+                    let infoAlimento = baseAlimentos.find(f => f.id === req.id);
+                    let color = getColorPorTipo(infoAlimento.tipo);
+                    return `<li style="display: flex; align-items: center; margin-bottom: 5px;">
+                                <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background-color:${color}; margin-right:8px;"></span>
+                                ${req.qty} ${infoAlimento.medida} de ${infoAlimento.nombre}
+                            </li>`;
+                }).join('');
+
+                const div = document.createElement('div');
+                div.className = `recipe-card ${esUrgente ? 'recipe-urgent' : ''}`;
+                let alertaUrgente = esUrgente ? `<span class="badge">🔥 Salva comida</span>` : '';
+                
+                div.innerHTML = `
+                    <img src="${recetaSeleccionada.imagen}" alt="${recetaSeleccionada.nombre}" class="recipe-img">
+                    <div class="recipe-content">
+                        <div>
+                            <h3 class="recipe-title">${recetaSeleccionada.nombre} ${alertaUrgente}</h3>
+                            <p style="margin-bottom: 8px; color: #555; font-size: 0.9em;"><strong>Ingredientes requeridos:</strong></p>
+                            <ul style="margin-top: 0; color: #666; padding-left: 5px; list-style: none;">
+                                ${textoIngredientes}
+                            </ul>
+                        </div>
+                        <button class="action-btn" style="margin-top: 15px; width: 100%;" onclick="cocinarReceta(${recetaSeleccionada.id})">Cocinar y Descontar</button>
+                    </div>`;
+                grid.appendChild(div);
+            }
+        }
+
+        function cocinarReceta(idReceta) {
+            const receta = baseRecetas.find(r => r.id === idReceta);
+            receta.ingredientes.forEach(req => {
+                let item = inventario.find(i => i.id === req.id);
+                if(item) { item.cantidad -= req.qty; } // Cambiado a cantidad
+            });
+            inventario = inventario.filter(item => item.cantidad > 0);
+            guardarDatos(); renderizarRecetas();
+            alert(`¡Genial! Has cocinado "${receta.nombre}".`);
+        }
+    </script>
+</body>
+</html>

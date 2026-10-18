@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
+-->
+<html>
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>FoodSaver - Recetas Sugeridas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            margin: 0; 
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .contenedor { 
+            width: 100%; 
+            max-width: 900px; 
+        }
+        
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #ccc;
+        }
+        .textos-cabecera h2 { margin: 0; color: #333; }
+        .textos-cabecera p { margin: 5px 0 0 0; color: #666; font-size: 14px; }
+        
+        .btn-volver { 
+            background-color: #6c757d; 
+            color: white; 
+            padding: 10px 15px; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-volver:hover { background-color: #5a6268; }
+
+        /* Cuadrícula para las tarjetas de recetas */
+        .grid-recetas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Diseño de cada tarjeta */
+        .tarjeta-receta {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .tarjeta-receta:hover {
+            transform: translateY(-5px); /* Efecto de elevarse al pasar el mouse */
+        }
+        
+        /* Espacio simulado para la foto del plato */
+        .imagen-receta {
+            height: 150px;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #adb5bd;
+            font-weight: bold;
+        }
+
+        .contenido-receta { padding: 20px; flex-grow: 1; }
+        .contenido-receta h3 { margin: 0 0 10px 0; color: #333; font-size: 18px; }
+        
+        /* Etiquetas informativas */
+        .etiquetas { margin-bottom: 15px; }
+        .badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .badge-dieta { background-color: #e2e3e5; color: #383d41; }
+        .badge-salva { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+        .btn-cocinar {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: auto;
+        }
+        .btn-cocinar:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor">
+        
+        <div class="cabecera">
+            <div class="textos-cabecera">
+                <h2>¿Qué cocinamos hoy?</h2>
+                <p>Recetas filtradas según tu perfil y los alimentos que están por vencer.</p>
+            </div>
+            <a href="despensa.html" class="btn-volver">Volver a Mi Despensa</a>
+        </div>
+
+        <div class="grid-recetas">
+            
+            <!-- Tarjeta de Receta 1 -->
+            <div class="tarjeta-receta">
+                <div class="imagen-receta">[Foto del Plato]</div>
+                <div class="contenido-receta">
+                    <h3>Tortilla de Verduras</h3>
+                    <div class="etiquetas">
+                        <span class="badge badge-dieta">Vegetariano</span>
+                        <span class="badge badge-salva">⚡ Salva: Huevos, Espinaca</span>
+                    </div>
+                    <p style="font-size: 13px; color: #666;">Una receta rápida y nutritiva perfecta para evitar que la espinaca se marchite.</p>
+                </div>
+                <button class="btn-cocinar">Ver Preparación</button>
+            </div>
+
+            <!-- Tarjeta de Receta 2 -->
+            <div class="tarjeta-receta">
+                <div class="imagen-receta">[Foto del Plato]</div>
+                <div class="contenido-receta">
+                    <h3>Pollo al Curry con Arroz</h3>
+                    <div class="etiquetas">
+                        <span class="badge badge-dieta">Omnívoro</span>
+                        <span class="badge badge-salva">⚡ Salva: Pechuga de Pollo</span>
+                    </div>
+                    <p style="font-size: 13px; color: #666;">Aprovecha esa pechuga que vence pronto con esta deliciosa preparación especiada.</p>
+                </div>
+                <button class="btn-cocinar">Ver Preparación</button>
+            </div>
+
+            <!-- Tarjeta de Receta 3 -->
+            <div class="tarjeta-receta">
+                <div class="imagen-receta">[Foto del Plato]</div>
+                <div class="contenido-receta">
+                    <h3>Batido Energético</h3>
+                    <div class="etiquetas">
+                        <span class="badge badge-dieta">Vegano</span>
+                        <span class="badge badge-salva">⚡ Salva: Plátano maduro, Leche vegetal</span>
+                    </div>
+                    <p style="font-size: 13px; color: #666;">Ideal para recuperar energías después del entrenamiento, usando fruta madura.</p>
+                </div>
+                <button class="btn-cocinar">Ver Preparación</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

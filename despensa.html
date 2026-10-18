@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
+-->
+<html>
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>FoodSaver - Mi Despensa</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            margin: 0; 
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .contenedor { 
+            background: white; 
+            border: 1px solid #ccc; 
+            padding: 30px; 
+            width: 100%; 
+            max-width: 800px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        }
+        
+        /* Encabezado y botones */
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        h2 { color: #333; margin: 0; }
+        .btn-accion { 
+            background-color: #28a745; 
+            color: white; 
+            padding: 10px 15px; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-accion:hover { background-color: #218838; }
+
+        /* Estilos de la tabla de inventario */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 10px; 
+        }
+        th, td { 
+            padding: 12px 15px; 
+            text-align: left; 
+            border-bottom: 1px solid #eee; 
+        }
+        th { 
+            background-color: #f8f9fa; 
+            color: #555; 
+            font-weight: bold; 
+        }
+        tr:hover { background-color: #f1f1f1; } /* Efecto al pasar el mouse sobre la fila */
+
+        /* Etiquetas de estado de caducidad (Badges) */
+        .estado {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            text-align: center;
+            min-width: 90px;
+        }
+        .estado-vencido { background-color: #dc3545; color: white; }        /* Rojo */
+        .estado-alerta { background-color: #ffc107; color: #333; }         /* Amarillo */
+        .estado-fresco { background-color: #d4edda; color: #155724; }      /* Verde claro */
+        
+        /* Botón de eliminar en la tabla */
+        .btn-eliminar {
+            background-color: transparent;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-eliminar:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor">
+        <div class="cabecera">
+            <h2>Mi Despensa Inteligente</h2>
+            <!-- Este botón lleva a la pantalla que creaste en el paso anterior -->
+            <a href="registro_alimentos.html" class="btn-accion">+ Añadir Alimento</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Alimento</th>
+                    <th>Categoría</th>
+                    <th>Fecha de Caducidad</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Fila 1: Ejemplo de alimento ya vencido -->
+                <tr>
+                    <td>Pechuga de Pollo</td>
+                    <td>Carnes</td>
+                    <td>15/10/2026</td>
+                    <td><span class="estado estado-vencido">¡Vencido!</span></td>
+                    <td><button class="btn-eliminar">Desechar</button></td>
+                </tr>
+
+                <!-- Fila 2: Ejemplo de alimento próximo a vencer -->
+                <tr>
+                    <td>Leche Entera</td>
+                    <td>Lácteos</td>
+                    <td>18/10/2026</td>
+                    <td><span class="estado estado-alerta">Por vencer</span></td>
+                    <td><button class="btn-eliminar">Desechar</button></td>
+                </tr>
+
+                <!-- Fila 3: Ejemplo de alimento en buen estado -->
+                <tr>
+                    <td>Arroz Blanco</td>
+                    <td>Despensa</td>
+                    <td>20/05/2027</td>
+                    <td><span class="estado estado-fresco">Buen estado</span></td>
+                    <td><button class="btn-eliminar">Desechar</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

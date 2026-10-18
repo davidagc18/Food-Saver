@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/html.html to edit this template
+-->
+<html>
+   <!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>FoodSaver - Añadir Alimento</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            margin: 0; 
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .contenedor { 
+            background: white; 
+            border: 1px solid #ccc; 
+            padding: 30px; 
+            width: 100%; 
+            max-width: 500px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+        }
+        
+        .cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        h2 { color: #333; margin: 0; }
+        
+        .btn-volver { 
+            background-color: #6c757d; 
+            color: white; 
+            padding: 8px 12px; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-volver:hover { background-color: #5a6268; }
+
+        label { 
+            font-weight: bold; 
+            font-size: 14px; 
+            display: block; 
+            margin-top: 15px; 
+            color: #444;
+        }
+        input, select { 
+            width: 100%; 
+            margin-top: 8px;
+            padding: 12px; 
+            border-radius: 4px; 
+            border: 1px solid #ccc; 
+            box-sizing: border-box; 
+            font-size: 15px;
+        }
+        
+        button[type="submit"] { 
+            background-color: #28a745; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            width: 100%; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold; 
+            margin-top: 25px;
+            transition: 0.3s;
+        }
+        button[type="submit"]:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor">
+        <div class="cabecera">
+            <h2>Añadir Alimento</h2>
+            <!-- Este botón permite al usuario arrepentirse y volver a su inventario -->
+            <a href="despensa.html" class="btn-volver">Volver</a>
+        </div>
+        
+        <!-- El formulario que luego enviaremos a Java -->
+        <form action="despensa.html" method="GET">
+            
+            <label for="nombre">Nombre del alimento:</label>
+            <input type="text" id="nombre" name="nombre" required placeholder="Ej. Leche entera, Huevos, Manzanas">
+
+            <label for="fecha_caducidad">Fecha de Caducidad / Vencimiento:</label>
+            <input type="date" id="fecha_caducidad" name="fecha_caducidad" required>
+
+            <label for="categoria">Categoría:</label>
+            <select id="categoria" name="categoria" required>
+                <option value="" disabled selected hidden>Selecciona una categoría...</option>
+                <option value="Lácteos">Lácteos</option>
+                <option value="Carnes">Carnes y Proteínas</option>
+                <option value="Frutas/Verduras">Frutas y Verduras</option>
+                <option value="Despensa">Despensa Seca (Arroz, Pasta, etc.)</option>
+                <option value="Salsas">Salsas y Condimentos</option>
+            </select>
+
+            <button type="submit">Guardar en FoodSaver</button>
+        </form>
+    </div>
+
+</body>
+</html>

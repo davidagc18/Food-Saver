@@ -1,0 +1,8 @@
+{
+    "name": "Food_Saver",
+    "version": "1.0.0",
+    "keywords": ["util", "functional", "server", "client", "browser"],
+    "author": "ianle",
+    "contributors": [],
+    "dependencies": {}
+}
